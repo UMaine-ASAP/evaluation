@@ -1,0 +1,28 @@
+{% extends 'layout.twig' %}
+
+{% block title %}Home{% endblock %}
+
+{% block head %}
+
+{% endblock %}
+
+{% block content %}
+<table class='table table-striped table-hover'>
+	<thead>
+		<tr><th>Name</th><th>Created</th><th><div class='text-center'>Members</div></th><th></th></tr>
+	</thead>
+	<tbody>
+		{% for session in sessions %}
+			<tr>
+				<td>{{session.title}}</td>
+				<td class='humanize-timestamp'>{{session.created}}</td>
+				<td><div class='text-center'>{{session.memberCount}}</div></td>
+				<td>
+					<a class='btn btn-info pull-right btn-small' href='participate/session/{{session.id}}'>Manage</a>
+				</td>
+			</tr>
+		{% endfor %}
+	</tbody>
+</table>
+
+{% endblock %}

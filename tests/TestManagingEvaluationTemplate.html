@@ -1,0 +1,70 @@
+<?php
+
+class TestManagingEvaluationTemplate
+{
+
+	function itShouldInsertIntoDatabaseWhenCreatingTemplateWithOneQuestion()
+	{
+		$question1 = RadioQuestionTemplate::create();
+
+		$et = EvaluationTemplate::create('Applicant Assessment', array($question1));
+		$et = EvaluationTemplate::retrieve($et->id);
+
+		$this->assert($et instanceOf EvaluationTemplate);
+	}
+
+	function itShouldInsertIntoDatabaseWhenCreatingATemplateWithNoQuestions()
+	{
+		$et = EvaluationTemplate::create('Applicant Assessment', array());
+
+		$et = EvaluationTemplate::retrieve($et->id);
+
+		$this->assert($et instanceOf EvaluationTemplate);
+	}
+
+
+	function itShouldInsertIntoDatabaseWhenCreatingTemplateWithRadioAndCommentQuestions()
+	{
+		$radioQuestion   = RadioQuestionTemplate::create();
+		$commentQuestion = CommentQuestionTemplate::create();
+
+		$id = EvaluationTemplate::create('Applicant Assessment', array($radioQuestion, $commentQuestion));
+		$et = EvaluationTemplate::retrieve($id);
+
+		$this->assert($et instanceOf EvaluationTemplate);
+	}
+
+	function itShouldIncrementQuestionCountWhenAddingQuestion()
+	{
+		// Create evaluation
+		$id = EvaluationTemplate::create('Applicant Assessment', array());
+		$et = EvaluationTemplate::retrieve($id);
+
+		// store old number
+		$oldNumberOfQuestions = $et->getNumberOfQuestions();
+
+		// Add question
+		$radioQuestion = RadioQuestionTemplate::create();
+		$et->addQuestion($radioQuestion);
+
+		// Test
+		$this->assertEquals($oldNumberOfQuestions + 1, $et->getNumberOfQuestions());
+	}
+
+	function itShouldBeRemovedFromDatabaseOnDeletion()
+	{
+		$question1 = RadioQuestionTemplate::create();
+
+		$et = EvaluationTemplate::create('Applicant Assessment', array($question1));
+		$et->delete();
+		
+		$et = EvaluationTemplate::retrieve($et->id);
+		$this->assert( !($et instanceOf EvaluationTemplate) );	
+	}
+
+	function after()
+	{
+		// @TODO Clean database 
+	}
+}
+

@@ -1,0 +1,165 @@
+{% extends 'layout.twig' %}
+
+{% block title %}{{topic.name}}{% endblock %}
+
+{% block head %}
+{% endblock %}
+
+{% block content %}
+
+<header>
+	<h1>{{topic.name}}</h1>
+</header>
+<br>
+<div class='row-fluid container-relative'>
+	<div class='span8'>
+		<section class='row-fluid'>
+			<h2 class='container-relative'>Evaluations <button href='#addTopic' class='btn btn-success pull-bottom-right' data-toggle="modal" >New Evaluation</button></h2>
+
+			<table class='table table-striped table-hover'>
+				<thead>
+					<tr><th>Name</th><th>Status</th><th>Items</th><th>Type</th><th>Created</th><th>Evaluations</th><th></th></tr>
+				</thead>
+				<tbody>
+					{% for topic in session.topics %}
+						<tr>
+							<td>{{topic.name}}</td>
+							<td>{{topic.status}}</td>
+							<td></td>
+							<td></td>
+							<td class='humanize-timestamp'>{{topic.created}}</td>
+							<td></td>
+							<td>
+								<a class='btn btn-info pull-right btn-mini' href='manage/session/{{session.id}}/topic/{{topic.id}}'>View</a>
+							</td>
+						</tr>
+					{% endfor %}
+				</tbody>
+			</table>
+		</section>
+
+	</div>
+	<aside class='span4'>
+		<h2 class='container-relative'>Evaluators</h2>
+		<table class='table table-striped table-hover'>
+			<thead>
+				<tr><th>Name</th><th></th></tr>
+			</thead>
+			<tbody>
+				{% for member in session.members %}
+					<tr>
+						<td>{{member.fullName}}</td>
+						<td>{% for role in member.roles %}
+								<span class='label label-{% if role.name == 'admin' %}important{% elseif role.name == 'evaluator' %}success{% else %}info{% endif %} label-mini'>{{role.name}}</span>
+							{% endfor %}
+						</td>
+						<td>
+							<button href='manage/session/{{session.id}}/edit-member-view/{{member.id}}' class='btn btn-info pull-right btn-mini' data-toggle="modal" data-target='#editMember' data-cache='false'>edit</button>
+						</td>
+					</tr>
+				{% endfor %}
+				<tr><td><button href='#addMember' class='btn btn-success btn-mini' data-toggle="modal">Add Evaluator</button></td><td></td><td></td></tr>
+			</tbody>
+		</table>
+			
+
+	</aside>
+</div>
+
+
+<!-- Edit Member Modal -->
+<div id="editMember" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+	<div class="modal-header">
+		<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+		<h3 id="myModalLabel">Edit Member</h3>
+	</div>
+	<div class="modal-body">
+
+	</div>
+	<div class="modal-footer">
+		<button class="btn" data-dismiss="modal" aria-hidden="true">Cancel</button>
+		<button id='save-changes-edit-member' class="btn btn-primary">Save Changes</button>
+	</div>
+	<script>
+		$('#save-changes-edit-member').click(function() {
+			$('#edit-member-form').submit();
+		});
+
+		// Force modal to be reloaded on subsequent calls
+		$('body').on('hidden', '.modal', function () {
+			$(this).removeData('modal');
+		});
+	</script>
+</div>
+
+<!-- Create Topic Modal -->
+<div id="addTopic" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+	<div class="modal-header">
+		<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+		<h3 id="myModalLabel">Add Topic</h3>
+	</div>
+	<div class="modal-body">
+		<form id='add-topic-form' action='manage/session/{{session.id}}/addTopic' method='post'>
+			<label for='name'>Name</label>
+			<input name='name' type='text'/>
+		</form>
+	</div>
+	<div class="modal-footer">
+		<button class="btn" data-dismiss="modal" aria-hidden="true">Cancel</button>
+		<button id='save-changes-add-topic' class="btn btn-primary">Create</button>
+	</div>
+	<script>
+		$('#save-changes-add-topic').click(function() {
+			$('#add-topic-form').submit();
+		});
+	</script>
+</div>
+
+<!-- Add Member Modal -->
+<div id="addMember" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+	<div class="modal-header">
+		<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+		<h3 id="myModalLabel">Add Member</h3>
+	</div>
+	<div class="modal-body">
+		<form id='add-member-form' action='manage/session/{{session.id}}/addUsersAsMembers' method='post'>
+
+			<button class='btn btn-success pull-right'>Invite new User</button>
+
+			<table id='usersNotMembersTable' class='table table-striped table-hover'>
+				<thead>
+					<tr><th>Select</th><th>Name</th><th>Email</th></tr>
+				</thead>
+				<tbody>
+					{% for user in session.usersNotMembers %}
+					<tr><td class='select'><input name='user-{{user.id}}' type='checkbox' value='{{user.id}}'/></td><td> {{user.fullName}}</td><td>{{user.email}}</td></tr>
+					{% endfor %}
+				</tbody>
+			</table>
+			<script>
+				// toggle checkbox on row click
+				$('#usersNotMembersTable tbody tr').click(function() {
+					var checkbox = $(this).children('td.select').children('input');
+					checkbox.prop('checked', !checkbox.prop('checked'));
+				});
+				// Make sure checkbox isn't 'checked' on then off immediately
+				$('#usersNotMembersTable tbody tr input').click(function(e) {
+					e.stopPropagation();
+				});
+			</script>
+
+
+		</form>
+	</div>
+	<div class="modal-footer">
+		<button class="btn" data-dismiss="modal" aria-hidden="true">Cancel</button>
+		<button id='save-changes-add-member' class="btn btn-primary">Save Changes</button>
+	</div>
+	<script>
+		$('#save-changes-add-member').click(function() {
+			$('#add-member-form').submit();
+		});
+	</script>
+</div>
+
+{% endblock %}

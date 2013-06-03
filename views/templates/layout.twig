@@ -1,0 +1,84 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+	<base href='{{WEBROOT}}/'>	
+	<link rel="shortcut icon" href="{{FAVICON}}" />		
+	<!-- charset must remain utf-8 to be handled properly by Processing -->
+	<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+	<title>{% block title %}{% endblock %}</title>
+
+	<link href="{{WEBROOT}}/views/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="{{CSSPATH}}/baseTheme.css" type="text/css" />
+	
+	<!-- Javascript libraries -->
+	<script type="text/javascript" src='http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js'></script>	
+	<script src="{{WEBROOT}}/views/bootstrap/js/bootstrap.min.js"></script>
+
+	<script>
+	var WEBROOT = '{{WEBROOT}}';
+	</script>
+
+	<script src='views/js/moment.min.js'></script>	
+	{% block head %}{% endblock %}
+	<script src='views/js/helpers.js'></script>
+	
+</head>	
+<body>
+	<nav class='navbar navbar-inverse'>
+		<div class='navbar-inner'>
+			<div class='container'>
+				<ul class='nav'>
+					<li><a href='#'>Test</a></li>
+				</ul>
+			</div>
+		</div>
+	</nav>
+	<header>
+	</header>
+	<div class='container'>
+		<!-- Error and Success Alerts -->
+		<div class='row-fluid'>
+			{% if flash['error'] %}
+			<div class='span12 alert alert-error'>
+				  <button type="button" class="close" data-dismiss="alert">&times;</button>
+				  {{ flash['error'] }}
+			</div>
+			{% endif %}
+			{% if flash['success'] %}
+			<div class='span12 alert alert-success'>
+				  <button type="button" class="close" data-dismiss="alert">&times;</button>
+				  {{ flash['success'] }}
+			</div>
+			{% endif %}
+
+		</div>		
+		<!-- Breadcrumbs -->
+		<div class='row-fluid'>
+			<div class='span12'>
+				{% if breadcrumbs|length > 0 %}
+					<ul class="breadcrumb">
+					{% for name,link in breadcrumbs %}
+						{% if not loop.last %}
+							<li><a href="{{link}}">{{name}}</a> <span class="divider">/</span>
+							</li>
+						{% else %}
+							<li class="active">{{name}}</li>
+						{% endif %}
+
+					{% endfor %}
+					</ul>
+				{% endif %}
+			</div>
+		</div>
+
+		<!-- Content -->
+		<div class='row-fluid'>
+			<div class='span12'>
+				{% block content %}{% endblock %}
+			</div>
+		</div>
+	</div>
+	<footer id='site-footer-container'>
+	</footer>
+</body>
+</html>

@@ -1,0 +1,15 @@
+<button class='btn btn-danger pull-right'>Remove Member</button>
+
+<form id='edit-member-form' action='manage/session/{{session.id}}/modifyRoles' method='post'>
+	<input type='hidden' name='memberId' value='{{member.id}}'/>
+	<h3>Roles for {{member.fullName}}</h3>
+	<table>
+	{% for role in allRoles %}
+		<tr>
+			<td><input type='checkbox' name='role-{{role.id}}' {% if member.hasRole(role) %}checked{% endif %}/></td>
+			<td><label for='role-{{role.id}}'>{{role.name}}</label></td>
+		</tr>
+	{% endfor %}
+	</table>
+
+</form>
